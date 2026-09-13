@@ -1,0 +1,87 @@
+{% extends "base.html" %}
+{% load store_extras %}
+
+{% block title %}Order Received | KSTRIVE ENERGY{% endblock %}
+
+{% block content %}
+
+<section class="order-success-page">
+
+    <div class="order-success-card">
+
+        <div class="order-success-icon">
+            ✓
+        </div>
+
+        <h1>Order Received!</h1>
+
+        <p class="order-success-message">
+            Thank you for choosing KSTRIVE ENERGY.
+            Your order has been received successfully.
+        </p>
+
+        <div class="order-number-box">
+            <span>Order Number</span>
+            <strong>{{ order.order_number }}</strong>
+        </div>
+
+        <div class="order-success-details">
+
+            <div>
+                <span>Customer</span>
+                <strong>{{ order.customer_name }}</strong>
+            </div>
+
+            <div>
+                <span>Email</span>
+                <strong>{{ order.email }}</strong>
+            </div>
+
+            <div>
+                <span>Phone</span>
+                <strong>{{ order.phone }}</strong>
+            </div>
+
+            <div>
+                <span>Delivery Location</span>
+                <strong>
+                    {{ order.city }}, {{ order.state }}
+                </strong>
+            </div>
+
+            <div>
+                <span>Order Total</span>
+                <strong>
+                    {{ order.total|ngn }}
+                </strong>
+            </div>
+
+            <div>
+                <span>Payment Status</span>
+                <strong>
+                    {{ order.get_payment_status_display }}
+                </strong>
+            </div>
+
+        </div>
+
+        <div class="order-success-note">
+            <strong>What's next?</strong>
+            <p>
+                Your order is currently pending payment.
+                Payment options will be provided in the next step.
+            </p>
+        </div>
+
+        <a
+            href="{% url 'product_list' %}"
+            class="checkout-button"
+        >
+            Continue Shopping
+        </a>
+
+    </div>
+
+</section>
+
+{% endblock %}

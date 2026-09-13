@@ -1,0 +1,288 @@
+{% extends "base.html" %}
+{% load store_extras %}
+
+{% block title %}Checkout | KSTRIVE ENERGY{% endblock %}
+
+{% block content %}
+
+<section class="checkout-page">
+
+    <div class="checkout-header">
+        <h1>Checkout</h1>
+        <p>Complete your details to place your order.</p>
+    </div>
+
+    {% if error %}
+        <div class="checkout-error">
+            {{ error }}
+        </div>
+    {% endif %}
+
+    <div class="checkout-layout">
+
+        <!-- Customer Information -->
+        <div class="checkout-form-card">
+
+            <h2>Delivery Information</h2>
+
+            <form method="post" action="{% url 'checkout' %}">
+                {% csrf_token %}
+
+                <div class="form-group">
+                    <label for="customer_name">
+                        Full Name *
+                    </label>
+
+                    <input
+                        type="text"
+                        id="customer_name"
+                        name="customer_name"
+                        placeholder="Enter your full name"
+                        required
+                    >
+                </div>
+
+                <div class="form-row">
+
+                    <div class="form-group">
+                        <label for="email">
+                            Email Address *
+                        </label>
+
+                        <input
+                            type="email"
+                            id="email"
+                            name="email"
+                            placeholder="you@example.com"
+                            required
+                        >
+                    </div>
+
+                    <div class="form-group">
+                        <label for="phone">
+                            Phone Number *
+                        </label>
+
+                        <input
+                            type="tel"
+                            id="phone"
+                            name="phone"
+                            placeholder="08012345678"
+                            required
+                        >
+                    </div>
+
+                </div>
+
+                <div class="form-group">
+                    <label for="address">
+                        Delivery Address *
+                    </label>
+
+                    <textarea
+                        id="address"
+                        name="address"
+                        rows="4"
+                        placeholder="Enter your full delivery address"
+                        required
+                    ></textarea>
+                </div>
+
+                <div class="form-row">
+
+                    <div class="form-group">
+                        <label for="city">
+                            City *
+                        </label>
+
+                        <input
+                            type="text"
+                            id="city"
+                            name="city"
+                            placeholder="Enter your city"
+                            required
+                        >
+                    </div>
+
+                    <div class="form-group">
+                        <label for="state">
+                            State *
+                        </label>
+
+                        <select
+                            id="state"
+                            name="state"
+                            required
+                        >
+                            <option value="">Select your state</option>
+
+                            <option>Abia</option>
+                            <option>Adamawa</option>
+                            <option>Akwa Ibom</option>
+                            <option>Anambra</option>
+                            <option>Bauchi</option>
+                            <option>Bayelsa</option>
+                            <option>Benue</option>
+                            <option>Borno</option>
+                            <option>Cross River</option>
+                            <option>Delta</option>
+                            <option>Ebonyi</option>
+                            <option>Edo</option>
+                            <option>Ekiti</option>
+                            <option>Enugu</option>
+                            <option>Gombe</option>
+                            <option>Imo</option>
+                            <option>Jigawa</option>
+                            <option>Kaduna</option>
+                            <option>Kano</option>
+                            <option>Katsina</option>
+                            <option>Kebbi</option>
+                            <option>Kogi</option>
+                            <option>Kwara</option>
+                            <option>Lagos</option>
+                            <option>Nasarawa</option>
+                            <option>Niger</option>
+                            <option>Ogun</option>
+                            <option>Ondo</option>
+                            <option>Osun</option>
+                            <option>Oyo</option>
+                            <option>Plateau</option>
+                            <option>Rivers</option>
+                            <option>Sokoto</option>
+                            <option>Taraba</option>
+                            <option>Yobe</option>
+                            <option>Zamfara</option>
+                            <option>Federal Capital Territory</option>
+                        </select>
+                    </div>
+
+                </div>
+
+                <button
+                    type="submit"
+                    class="checkout-submit"
+                >
+                    Place Order
+                </button>
+
+            </form>
+
+        </div>
+
+        <!-- Order Summary -->
+        <aside class="checkout-summary">
+
+            <h2>Your Order</h2>
+
+            {% for item in cart %}
+
+                <div class="checkout-item">
+
+                    <div class="checkout-item-info">
+                        <strong>{{ item.product.name }}</strong>
+
+                        <span>
+                            {{ item.quantity }} ×
+                           {{ item.price|ngn }}
+                        </span>
+                    </div>
+
+                    <strong>
+                        {{ item.total_price|ngn }}
+                    </strong>
+
+                </div>
+
+            {% endfor %}
+
+            <div class="checkout-summary-line">
+                <span>Subtotal</span>
+                <strong>
+                    {{ cart.get_total_price|ngn }}
+                </strong>
+            </div>
+
+            <div class="checkout-summary-line">
+                <span>Delivery Fee</span>
+                <strong id="delivery-fee">₦0.00</strong>
+            </div>
+
+            <div class="checkout-summary-total">
+                <span>Total</span>
+                <strong id="order-total">
+                    {{ cart.get_total_price|ngn }}
+                </strong>
+            </div>
+
+            <p class="checkout-note">
+                Your order will be reviewed and processed after submission.
+            </p>
+
+        </aside>
+
+    </div>
+
+</section>
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+    const stateSelect = document.querySelector('select[name="state"]');
+    const deliveryFeeElement = document.getElementById("delivery-fee");
+    const orderTotalElement = document.getElementById("order-total");
+
+    const subtotal = Number(
+        "{{ cart.get_total_price|floatformat:2 }}"
+    );
+
+    const deliveryFeeUrl = "{% url 'delivery_fee_api' %}";
+
+    function formatNaira(amount) {
+        return "₦" + amount.toLocaleString("en-NG", {
+            minimumFractionDigits: 2,
+            maximumFractionDigits: 2
+        });
+    }
+
+    if (!stateSelect || !deliveryFeeElement || !orderTotalElement) {
+        console.error("Checkout delivery elements were not found.");
+        return;
+    }
+
+    stateSelect.addEventListener("change", async function () {
+        const state = this.value;
+
+        if (!state) {
+            deliveryFeeElement.textContent = "Select state";
+            orderTotalElement.textContent = formatNaira(subtotal);
+            return;
+        }
+
+        deliveryFeeElement.textContent = "Calculating...";
+        orderTotalElement.textContent = "Calculating...";
+
+        try {
+            const response = await fetch(
+                `${deliveryFeeUrl}?state=${encodeURIComponent(state)}`
+            );
+
+            if (!response.ok) {
+                throw new Error("Delivery request failed.");
+            }
+
+            const data = await response.json();
+            const fee = Number(data.delivery_fee);
+
+            deliveryFeeElement.textContent = formatNaira(fee);
+            orderTotalElement.textContent = formatNaira(subtotal + fee);
+
+        } catch (error) {
+            console.error("Delivery fee error:", error);
+
+            deliveryFeeElement.textContent = "Unable to calculate";
+            orderTotalElement.textContent = formatNaira(subtotal);
+        }
+    });
+});
+</script>
+
+{% endblock %}

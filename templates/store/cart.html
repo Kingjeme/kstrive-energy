@@ -1,0 +1,217 @@
+{% extends "base.html" %}
+{% load store_extras %}
+
+{% block title %}
+Shopping Cart | KSTRIVE ENERGY
+{% endblock %}
+
+{% block content %}
+
+<section class="cart-page">
+
+    <div class="container">
+
+        <div class="shop-heading">
+
+            <span>YOUR CART</span>
+
+            <h1>
+                Shopping Cart
+            </h1>
+
+            <p>
+                Review the products you have selected.
+            </p>
+
+        </div>
+
+
+        {% if cart|length > 0 %}
+
+            <div class="cart-layout">
+
+                <div class="cart-items">
+
+                    {% for item in cart %}
+
+                        <article class="cart-item">
+
+                            <div class="cart-item-image">
+
+                                {% if item.product.image %}
+
+                                    <img
+                                        src="{{ item.product.image.url }}"
+                                        alt="{{ item.product.name }}"
+                                    >
+
+                                {% else %}
+
+                                    <div>
+                                        Product Image
+                                    </div>
+
+                                {% endif %}
+
+                            </div>
+
+
+                            <div class="cart-item-info">
+
+                                <div class="product-category">
+                                    {{ item.product.category.name }}
+                                </div>
+
+                                <h2>
+                                    {{ item.product.name }}
+                                </h2>
+
+                                <p>
+                                    {{ item.product.brand.name }}
+                                </p>
+
+                                <div class="cart-item-price">
+                                    {{ item.price|ngn }}
+                                </div>
+
+                                <form
+                                    method="post"
+                                    action="{% url 'cart_update' item.product.id %}"
+                                    class="cart-quantity-form"
+                                >
+                                    {% csrf_token %}
+
+                                    <label for="quantity-{{ item.product.id }}">
+                                        Quantity
+                                    </label>
+
+                                    <div class="cart-quantity-control">
+
+                                        <button
+                                            type="button"
+                                            onclick="changeCartQuantity(
+                                                'quantity-{{ item.product.id }}',
+                                                -1
+                                            )"
+                                        >
+                                            −
+                                        </button>
+
+                                        <input
+                                            id="quantity-{{ item.product.id }}"
+                                            type="number"
+                                            name="quantity"
+                                            value="{{ item.quantity }}"
+                                            min="1"
+                                            max="{{ item.product.stock_quantity }}"
+                                        >
+
+                                        <button
+                                            type="button"
+                                            onclick="changeCartQuantity(
+                                                'quantity-{{ item.product.id }}',
+                                                1
+                                            )"
+                                        >
+                                            +
+                                        </button>
+
+                                        <button
+                                            type="submit"
+                                            class="cart-update-button"
+                                        >
+                                            Update
+                                        </button>
+
+                                    </div>
+                                </form>
+
+                            </div>
+
+
+                            <div class="cart-item-total">
+
+                                <strong>
+                                   {{ item.total_price|ngn }}
+                                </strong>
+
+                                <form
+                                    method="post"
+                                    action="{% url 'cart_remove' item.product.id %}"
+                                >
+
+                                    {% csrf_token %}
+
+                                    <button type="submit">
+                                        Remove
+                                    </button>
+
+                                </form>
+
+                            </div>
+
+                        </article>
+
+                    {% endfor %}
+
+                </div>
+
+
+                <aside class="cart-summary">
+
+                    <h2>
+                        Order Summary
+                    </h2>
+
+                    <div class="cart-summary-row">
+                        <span>Items</span>
+                        <strong>{{ cart|length }}</strong>
+                    </div>
+
+                    <div class="cart-summary-total">
+                        <span>Subtotal</span>
+
+                        <strong>
+                            {{ cart.get_total_price|ngn }}
+                        </strong>
+                    </div>
+
+                    <a href="{% url 'checkout' %}" class="checkout-button">
+                        Proceed to Checkout
+                    </a>
+                </aside>
+
+            </div>
+
+        {% else %}
+
+            <div class="empty-shop">
+
+                <div class="empty-shop-icon">
+                    🛒
+                </div>
+
+                <h2>
+                    Your cart is empty.
+                </h2>
+
+                <p>
+                    Add products to your cart and they will appear here.
+                </p>
+
+                <a
+                    href="{% url 'product_list' %}"
+                    class="btn btn-primary"
+                >
+                    Continue Shopping
+                </a>
+
+            </div>
+
+        {% endif %}
+
+    </div>
+
+</section>
+
+{% endblock %}

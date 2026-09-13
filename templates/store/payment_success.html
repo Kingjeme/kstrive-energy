@@ -1,0 +1,79 @@
+{% extends "base.html" %}
+{% load store_extras %}
+
+{% block title %}Payment Successful | KSTRIVE ENERGY{% endblock %}
+
+{% block content %}
+
+<section class="order-success-page">
+
+    <div class="order-success-card">
+
+        <div class="order-success-icon">
+            ✓
+        </div>
+
+        <h1>Payment Successful!</h1>
+
+        <p class="order-success-message">
+            Thank you for your payment.
+            Your KSTRIVE ENERGY order has been confirmed.
+        </p>
+
+        <div class="order-number-box">
+            <span>Order Number</span>
+            <strong>{{ order.order_number }}</strong>
+        </div>
+
+        <div class="order-success-details">
+
+            <div>
+                <span>Customer</span>
+                <strong>{{ order.customer_name }}</strong>
+            </div>
+
+            <div>
+                <span>Order Total</span>
+                <strong>
+                    {{ order.total|ngn }}
+                </strong>
+            </div>
+
+            <div>
+                <span>Order Status</span>
+                <strong>
+                    {{ order.get_status_display }}
+                </strong>
+            </div>
+
+            <div>
+                <span>Payment Status</span>
+                <strong>
+                    {{ order.get_payment_status_display }}
+                </strong>
+            </div>
+
+        </div>
+
+        <div class="order-success-note">
+            <strong>What's next?</strong>
+
+            <p>
+                Your payment has been verified successfully.
+                KSTRIVE ENERGY will now proceed with order
+                processing and fulfillment.
+            </p>
+        </div>
+
+        <a
+            href="{% url 'product_list' %}"
+            class="checkout-button"
+        >
+            Continue Shopping
+        </a>
+
+    </div>
+
+</section>
+
+{% endblock %}

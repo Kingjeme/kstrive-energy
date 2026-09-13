@@ -1,0 +1,210 @@
+{% extends "base.html" %}
+{% load store_extras %}
+
+{% block title %}
+{{ product.name }} | KSTRIVE ENERGY
+{% endblock %}
+
+{% block content %}
+
+<section class="product-detail-page">
+
+    <div class="container">
+
+        <div class="product-detail">
+
+            <!-- PRODUCT IMAGE -->
+            <div class="product-detail-image">
+
+                {% if product.image %}
+                    <img
+                        src="{{ product.image.url }}"
+                        alt="{{ product.name }}"
+                    >
+                {% else %}
+                    <div class="detail-image-placeholder">
+                        Product Image
+                    </div>
+                {% endif %}
+
+            </div>
+
+
+            <!-- PRODUCT INFORMATION -->
+            <div class="product-detail-info">
+
+                <div class="product-detail-category">
+                    {{ product.category.name }}
+                </div>
+
+                <h1>
+                    {{ product.name }}
+                </h1>
+
+                <p class="detail-brand">
+                    Brand: <strong>{{ product.brand.name }}</strong>
+                </p>
+
+                <div class="detail-price">
+                    {{ product.price|ngn }}
+                </div>
+
+
+                <!-- STOCK STATUS -->
+                {% if product.stock_quantity <= 0 %}
+
+                    <div class="stock-status out-of-stock">
+                        ✕ Out of Stock
+                    </div>
+
+                    <p class="stock-help-text">
+                        This product is currently unavailable.
+                    </p>
+
+                {% elif product.stock_quantity <= product.minimum_stock_level %}
+
+                    <div class="stock-status limited-stock">
+                        ⚠ Limited Availability
+                    </div>
+
+                    <p class="stock-help-text">
+                        Only {{ product.stock_quantity }} unit(s) currently available.
+                    </p>
+
+                {% else %}
+
+                    <div class="stock-status in-stock">
+                        ✓ In Stock
+                    </div>
+
+                {% endif %}
+
+
+                {% if product.description %}
+
+                    <div class="detail-description">
+
+                        <h2>Description</h2>
+
+                        <p>
+                            {{ product.description }}
+                        </p>
+
+                    </div>
+
+                {% endif %}
+
+
+                <!-- PURCHASE AREA -->
+                {% if product.stock_quantity > 0 %}
+
+                    <form
+                        method="post"
+                        action="{% url 'cart_add' product.id %}"
+                        class="purchase-area"
+                    >
+
+                        {% csrf_token %}
+
+                        <div class="quantity-control">
+
+                            <button
+                                type="button"
+                                onclick="
+                                    this.nextElementSibling.stepDown();
+                                    this.nextElementSibling.dispatchEvent(new Event('change'));
+                                "
+                                aria-label="Decrease quantity"
+                            >
+                                −
+                            </button>
+
+                            <input
+                                type="number"
+                                name="quantity"
+                                value="1"
+                                min="1"
+                                max="{{ product.stock_quantity }}"
+                                aria-label="Quantity"
+                            >
+
+                            <button
+                                type="button"
+                                onclick="
+                                    this.previousElementSibling.stepUp();
+                                    this.previousElementSibling.dispatchEvent(new Event('change'));
+                                "
+                                aria-label="Increase quantity"
+                            >
+                                +
+                            </button>
+
+                        </div>
+
+                        <button
+                            type="submit"
+                            class="add-to-cart-button"
+                        >
+                            Add to Cart
+                        </button>
+
+                    </form>
+
+                {% else %}
+
+                    <button
+                        type="button"
+                        class="add-to-cart-button"
+                        disabled
+                    >
+                        Out of Stock
+                    </button>
+
+                {% endif %}
+
+            </div>
+
+        </div>
+
+
+        <!-- SPECIFICATIONS -->
+
+        {% if product.specifications.all %}
+
+            <div class="specifications-section">
+
+                <div class="section-heading">
+                    <span>PRODUCT INFORMATION</span>
+
+                    <h2>Specifications</h2>
+                </div>
+
+                <div class="specifications-table">
+
+                    {% for specification in product.specifications.all %}
+
+                        <div class="specification-row">
+
+                            <div class="specification-name">
+                                {{ specification.name }}
+                            </div>
+
+                            <div class="specification-value">
+                                {{ specification.value }}
+                            </div>
+
+                        </div>
+
+                    {% endfor %}
+
+                </div>
+
+            </div>
+
+        {% endif %}
+
+    </div>
+
+</section>
+
+{% endblock %}

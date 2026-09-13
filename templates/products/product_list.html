@@ -1,0 +1,135 @@
+{% extends "base.html" %}
+{% load store_extras %}
+
+{% block title %}
+Shop | KSTRIVE ENERGY
+{% endblock %}
+
+{% block content %}
+
+<section class="shop-page">
+
+    <div class="container">
+
+        <div class="shop-heading">
+            <span>THE KSTRIVE ENERGY STORE</span>
+
+            <h1>
+                Shop Energy Products
+            </h1>
+
+            <p>
+                Explore solar, electrical, energy storage and
+                electric mobility products.
+            </p>
+        </div>
+
+
+        {% if products %}
+
+            <div class="product-grid">
+
+                {% for product in products %}
+
+                    <article class="product-card">
+
+                        <!-- PRODUCT IMAGE -->
+                        <div class="product-image">
+
+                            {% if product.image %}
+                                <img
+                                    src="{{ product.image.url }}"
+                                    alt="{{ product.name }}"
+                                >
+                            {% else %}
+                                <div class="product-image-placeholder">
+                                    Product Image
+                                </div>
+                            {% endif %}
+
+                        </div>
+
+
+                        <!-- PRODUCT INFORMATION -->
+                        <div class="product-info">
+
+                            <div class="product-category">
+                                {{ product.category.name }}
+                            </div>
+
+                            <h2>
+                                {{ product.name }}
+                            </h2>
+
+                            <p class="product-brand">
+                                {{ product.brand.name }}
+                            </p>
+
+                            <div class="product-price">
+                                {{ product.price|ngn }}
+                            </div>
+
+
+                            <!-- STOCK STATUS -->
+                            {% if product.stock_quantity <= 0 %}
+
+                                <div class="stock-status out-of-stock">
+                                    ✕ Out of Stock
+                                </div>
+
+                            {% elif product.stock_quantity <= product.minimum_stock_level %}
+
+                                <div class="stock-status limited-stock">
+                                    ⚠ Limited Availability
+                                </div>
+
+                            {% else %}
+
+                                <div class="stock-status in-stock">
+                                    ✓ In Stock
+                                </div>
+
+                            {% endif %}
+
+
+                            <a
+                                href="{% url 'product_detail' product.slug %}"
+                                class="product-button"
+                            >
+                                View Product
+                            </a>
+
+                        </div>
+
+                    </article>
+
+                {% endfor %}
+
+            </div>
+
+        {% else %}
+
+            <div class="empty-shop">
+
+                <div class="empty-shop-icon">
+                    🛒
+                </div>
+
+                <h2>
+                    Our store is being stocked.
+                </h2>
+
+                <p>
+                    Products will appear here as they are added
+                    to the KSTRIVE ENERGY catalogue.
+                </p>
+
+            </div>
+
+        {% endif %}
+
+    </div>
+
+</section>
+
+{% endblock %}

@@ -1,0 +1,59 @@
+{% extends "base.html" %}
+
+{% block title %}Payment Not Completed | KSTRIVE ENERGY{% endblock %}
+
+{% block content %}
+
+<section class="order-success-page">
+
+    <div class="order-success-card">
+
+        <div class="order-success-icon">
+            !
+        </div>
+
+        <h1>Payment Not Completed</h1>
+
+        <p class="order-success-message">
+            We could not confirm your payment.
+            Your order has not been marked as paid.
+        </p>
+
+        {% if order %}
+
+            <div class="order-number-box">
+                <span>Order Number</span>
+                <strong>{{ order.order_number }}</strong>
+            </div>
+
+        {% endif %}
+
+        {% if error %}
+            <div class="checkout-error">
+                {{ error }}
+            </div>
+        {% endif %}
+
+        <div class="order-success-note">
+            <strong>Don't worry.</strong>
+
+            <p>
+                If money was deducted from your account,
+                please do not make another payment immediately.
+                We will verify the transaction before taking
+                any further action.
+            </p>
+        </div>
+
+        <a
+            href="{% url 'product_list' %}"
+            class="checkout-button"
+        >
+            Continue Shopping
+        </a>
+
+    </div>
+
+</section>
+
+{% endblock %}
