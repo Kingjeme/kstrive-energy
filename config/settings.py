@@ -31,7 +31,11 @@ SECRET_KEY = 'django-insecure-ce*80(^8x5(^hm$ub62slhwo$&%50h2=o^g=(s4a85$75-3g4a
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = [
+    "kstrive-energy.onrender.com",
+    "localhost",
+    "127.0.0.1",
+]
 
 
 # Application definition
