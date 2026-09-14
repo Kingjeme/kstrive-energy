@@ -29,15 +29,21 @@ PAYSTACK_SECRET_KEY = os.getenv("PAYSTACK_SECRET_KEY", "").strip()
 SECRET_KEY = 'django-insecure-ce*80(^8x5(^hm$ub62slhwo$&%50h2=o^g=(s4a85$75-3g4a'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = os.getenv("DEBUG", "False").lower() == "true"
 
 ALLOWED_HOSTS = [
     "kstrive-energy.onrender.com",
+    "kstriveenergy.com",
+    "www.kstriveenergy.com",
     "localhost",
     "127.0.0.1",
 ]
 
-
+CSRF_TRUSTED_ORIGINS = [
+    "https://kstrive-energy.onrender.com",
+    "https://kstriveenergy.com",
+    "https://www.kstriveenergy.com",
+]
 # Application definition
 
 INSTALLED_APPS = [
